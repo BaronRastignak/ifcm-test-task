@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="IncomingFileDetector.Service.UnitTests/IncomingFileDetector.Service.UnitTests.csproj" Id="b3f72195-2f30-449d-a05b-27f42d78fb3d" />
   <Project Path="IncomingFileDetector.Service/IncomingFileDetector.Service.csproj" />
 </Solution>
