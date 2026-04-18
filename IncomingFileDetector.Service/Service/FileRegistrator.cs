@@ -5,7 +5,7 @@ namespace IncomingFileDetector.Service;
 /// <summary>
 /// Реализует функциональность для регистрации входящих файлов и форматирования их метаданных.
 /// </summary>
-public class FileRegistrator : IFileRegistrator
+public sealed class FileRegistrator : IFileRegistrator
 {
     private readonly HashSet<string> _registeredFiles = [];
     
