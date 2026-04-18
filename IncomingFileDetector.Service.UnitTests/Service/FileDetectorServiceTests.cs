@@ -265,7 +265,11 @@ public class FileDetectorServiceTests
     private static FileDetectorService CreateService(string observedDirectory, long pollingTimeout, IFileRegistrator registrator)
     {
         var logger = new Mock<ILogger<FileDetectorService>>().Object;
-        var options = new FileDetectorOptions(observedDirectory, pollingTimeout);
+        var options = new FileDetectorOptions
+        {
+            ObservedDirectory = observedDirectory,
+            PollingTimeout = pollingTimeout
+        };
         return new FileDetectorService(logger, options, registrator);
     }
 

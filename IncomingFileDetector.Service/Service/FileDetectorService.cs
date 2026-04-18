@@ -25,16 +25,16 @@ public sealed class FileDetectorService(
     /// <summary>
     /// Возвращает или задаёт директорию, которая отслеживается для обнаружения входящих файлов.
     /// </summary>
-    private DirectoryInfo ObservedDirectory
+    public DirectoryInfo ObservedDirectory
     {
         get => Volatile.Read(ref field);
-        set => Volatile.Write(ref field, value);
+        private set => Volatile.Write(ref field, value);
     } = new(options.Value.ObservedDirectory);
 
     /// <summary>
     /// Получает или задает тайм-аут проверки каталога в миллисекундах.
     /// </summary>
-    private long PollingTimeout { get; set; } = options.Value.PollingTimeout;
+    public long PollingTimeout { get; private set; } = options.Value.PollingTimeout;
 
     /// <summary>
     /// Событие, возникающее при успешной регистрации нового файла в наблюдаемой директории.

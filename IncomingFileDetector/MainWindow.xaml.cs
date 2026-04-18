@@ -1,4 +1,6 @@
-﻿using IncomingFileDetector.ViewModel;
+﻿using System.Windows;
+using IncomingFileDetector.ViewModel;
+using Microsoft.Win32;
 
 namespace IncomingFileDetector;
 /// <summary>
@@ -15,6 +17,7 @@ public partial class MainWindow
     public MainWindow(IMainViewModel viewModel)
     {
         InitializeComponent();
+        DataContext = viewModel;
         ViewModel = viewModel;
         
         ListRegisteredFiles.ItemsSource = ViewModel.RegisteredFiles;
@@ -29,4 +32,17 @@ public partial class MainWindow
     /// и взаимодействием с данными в главном окне.
     /// </value>
     public IMainViewModel ViewModel { get; }
+
+    private void ButtonChangeDirectoryOnClick(object sender, RoutedEventArgs e)
+    {
+        var openFolderDialog = new OpenFolderDialog
+        {
+            Multiselect = false,
+            Title = "Select a folder to scan",
+            InitialDirectory = ViewModel.ObservedDirectory
+        };
+        var result = openFolderDialog.ShowDialog();
+        if (result == true)
+            ViewModel.ObservedDirectory = openFolderDialog.FolderName;
+    }
 }

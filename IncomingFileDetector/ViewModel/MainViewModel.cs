@@ -44,6 +44,20 @@ internal sealed class MainViewModel : IMainViewModel
     /// <inheritdoc />
     public ObservableCollection<IncomingFile> RegisteredFiles { get; } = [];
 
+    /// <inheritdoc />
+    public string ObservedDirectory
+    {
+        get => _fileDetectorService.ObservedDirectory.FullName;
+        set => _fileDetectorService.UpdateObservedDirectory(value);
+    }
+
+    /// <inheritdoc />
+    public long PollingTimeout
+    {
+        get => (long) (_fileDetectorService.PollingTimeout / 1000d);
+        set => _fileDetectorService.UpdatePollingTimeout(value * 1000);
+    }
+
     #region IDisposable
 
     /// <inheritdoc />
