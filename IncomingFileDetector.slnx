@@ -1,3 +1,5 @@
 <Solution>
-  <Project Path="IncomingFileDetector.Logic/IncomingFileDetector.Service.csproj" />
+  <Project Path="IncomingFileDetector.Service.UnitTests/IncomingFileDetector.Service.UnitTests.csproj" Id="b3f72195-2f30-449d-a05b-27f42d78fb3d" />
+  <Project Path="IncomingFileDetector.Service/IncomingFileDetector.Service.csproj" />
+  <Project Path="IncomingFileDetector/IncomingFileDetector.csproj" Id="0aa3e76a-f1fe-4572-92be-660774a0a379" />
 </Solution>
