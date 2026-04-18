@@ -83,6 +83,43 @@ public class FileDetectorServiceTests
     }
 
     /// <summary>
+    /// Проверяет, что при запуске службы, если файл уже существует, событие <see cref="FileDetectorService.FileRegistered"/> не вызывается.
+    /// </summary>
+    /// <remarks>
+    /// Этот тест создает временную директорию с файлом, запускает службу <see cref="FileDetectorService"/> и проверяет,
+    /// что событие <see cref="FileDetectorService.FileRegistered"/> не поднимается для файлов, которые уже существовали
+    /// до запуска службы.
+    /// </remarks>
+    /// <exception cref="AssertFailedException">
+    /// Выбрасывается, если событие <see cref="FileDetectorService.FileRegistered"/> было вызвано.
+    /// </exception>
+    [TestMethod]
+    public async Task StartAsync_FileAlreadyExists_DoesNotRaiseFileRegistered()
+    {
+        var directory = CreateTempDirectoryWithFile("already-exists.txt");
+        var service = CreateService(directory, pollingTimeout: 20, new FileRegistrator());
+        var eventTask = new TaskCompletionSource<FileRegisteredEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
+        service.FileRegistered += (_, args) => eventTask.TrySetResult(args);
+
+        try
+        {
+            await service.StartAsync(CancellationToken.None);
+
+            await Task.Delay(TimeSpan.FromMilliseconds(300));
+            Assert.IsFalse(
+                eventTask.Task.IsCompleted,
+
+                "Did not expect FileRegistered to be raised for files that already existed before service start.");
+        }
+        finally
+        {
+            await service.StopAsync(CancellationToken.None);
+            await service.DisposeAsync();
+            DeleteDirectoryIfExists(directory);
+        }
+    }
+
+    /// <summary>
     /// Проверяет, что метод <see cref="FileDetectorService.UpdateObservedDirectory"/> корректно обновляет наблюдаемую директорию
     /// после запуска службы <see cref="FileDetectorService"/> и инициирует сканирование новой директории.
     /// </summary>

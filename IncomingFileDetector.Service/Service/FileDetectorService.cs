@@ -129,6 +129,42 @@ public sealed class FileDetectorService(
             logger.LogError(ex, "Access to observed directory was denied: {ObservedDirectory}", ObservedDirectory.FullName);
         }
     }
+
+    /// <summary>
+    /// Инициализирует начальное состояние, регистрируя все файлы, уже существующие
+    /// в наблюдаемой директории.
+    /// </summary>
+    private void PopulateInitialState()
+    {
+        try
+        {
+            var filesCount = 0;
+            foreach (var file in ObservedDirectory.EnumerateFiles())
+            {
+                filesCount++;
+                
+                try
+                {
+                    fileRegistrator.RegisterFile(file, out _);
+                }
+                catch (IOException ex)
+                {
+                    logger.LogError(ex, "Error accessing file {FilePath}", file.FullName);
+                }
+            }
+            
+            if (logger.IsEnabled(LogLevel.Information))
+                logger.LogInformation("Initial number of files in the directory: {InitialCount}", filesCount);
+        }
+        catch (DirectoryNotFoundException ex)
+        {
+            logger.LogError(ex, "Observed directory was not found or is no longer available: {ObservedDirectory}", ObservedDirectory.FullName);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            logger.LogError(ex, "Access to observed directory was denied: {ObservedDirectory}", ObservedDirectory.FullName);
+        }
+    }
     
     /// <summary>
     /// Вызывает событие <see cref="FileRegistered"/> для уведомления о зарегистрированном файле.
@@ -145,6 +181,7 @@ public sealed class FileDetectorService(
     public Task StartAsync(CancellationToken cancellationToken)
     {
         logger.LogInformation("{ServiceName} is starting.", nameof(FileDetectorService));
+        PopulateInitialState();
         _timer = new Timer(RegisterIncomingFiles, null, 0, PollingTimeout);
         return Task.CompletedTask;
     }
